@@ -1,11 +1,20 @@
 // src/cards/dto/create-card.dto.ts
-import { IsArray, IsNumber, IsObject, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsLowercase,
+  IsNumber,
+  IsObject,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class CreateCardDto {
   @IsString()
+  @IsLowercase()
   cardName: string;
 
   @IsString()
+  @IsLowercase()
   bank: string;
 
   @IsNumber()
@@ -40,4 +49,8 @@ export class CreateCardDto {
     joining: number;
     renewal: number;
   };
+
+  @IsOptional()
+  @IsString()
+  summary: string;
 }

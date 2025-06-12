@@ -32,12 +32,12 @@ export class CardsController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.cardsService.findOne(+id);
+    return this.cardsService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateCardDto: UpdateCardDto) {
-    return this.cardsService.update(+id, updateCardDto);
+    return this.cardsService.update(id, updateCardDto);
   }
 
   @Delete(':id')

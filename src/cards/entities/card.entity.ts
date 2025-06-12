@@ -6,10 +6,10 @@ export type CardDocument = HydratedDocument<Card>;
 
 @Schema()
 export class Card {
-  @Prop({ required: true })
+  @Prop({ required: true, lowercase: true })
   cardName: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, lowercase: true })
   bank: string;
 
   @Prop({ required: true })
@@ -47,6 +47,9 @@ export class Card {
     joining: number;
     renewal: number;
   };
+
+  @Prop({ default: '' })
+  summary: string;
 }
 
 export const CardSchema = SchemaFactory.createForClass(Card);
