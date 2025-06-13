@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { CardsService } from './cards.service';
 import { CreateCardDto } from './dto/create-card.dto';
@@ -20,9 +21,10 @@ export class CardsController {
     return this.cardsService.create(createCardDto);
   }
 
-  @Post('/query')
-  query(@Body() body: { prompt: string }) {
-    return this.cardsService.query(body.prompt);
+  @Get('/query')
+  query(@Query('prompt') prompt: string) {
+    console.log(prompt);
+    return this.cardsService.query(prompt);
   }
 
   @Get()

@@ -25,19 +25,82 @@ export class OpenAIService {
           function: {
             name: process.env.GET_CARDS,
             description:
-              'Search for credit cards using filters like features, annual fee, and issuing bank',
+              'Search for credit cards using filters like features, annual fee, bestfor, categories, and issuing bank',
             parameters: {
               type: 'object',
               properties: {
-                features: {
-                  type: 'array',
-                  items: { type: 'string' },
+                matchOperator: {
+                  type: 'string',
+                  enum: ['and', 'or'],
                   description:
-                    'Card features like lounge access, fuel cashback',
+                    "Determines how to combine multiple filters e.g (feature, categories). Use 'and' to match all, 'or' to match any. Ignored if only one filter is provided.",
                 },
+
+                features: {
+                  type: 'object',
+                  properties: {
+                    values: {
+                      type: 'array',
+                      items: { type: 'string' },
+                      description:
+                        'Card features like lounge access, fuel cashback',
+                    },
+                    matchType: {
+                      type: 'string',
+                      enum: ['all', 'in'],
+                      description:
+                        "Use 'all' to return items that include all specified values, and 'in' to return items that include at least one of the values.",
+                    },
+                  },
+                },
+                bestFor: {
+                  type: 'object',
+                  properties: {
+                    values: {
+                      type: 'array',
+                      items: { type: 'string' },
+                      description:
+                        'Card benefits like e.g (frequent traveler, education)',
+                    },
+                    matchType: {
+                      type: 'string',
+                      enum: ['all', 'in'],
+                      description:
+                        "Use 'all' to return items that include all specified values, and 'in' to return items that include at least one of the values.",
+                    },
+                  },
+                },
+                categories: {
+                  type: 'object',
+                  properties: {
+                    values: {
+                      type: 'array',
+                      items: { type: 'string' },
+                      description:
+                        'Card benefits like e.g (luxury, travellers, premium)',
+                    },
+                    matchType: {
+                      type: 'string',
+                      enum: ['all', 'in'],
+                      description:
+                        "Use 'all' to return items that include all specified values, and 'in' to return items that include at least one of the values.",
+                    },
+                  },
+                },
+
                 annualFee: {
-                  type: 'number',
-                  description: 'Maximum acceptable annual fee',
+                  type: 'object',
+                  properties: {
+                    value: {
+                      type: 'number',
+                      description: 'Maximum acceptable annual fee',
+                    },
+                    comparator: {
+                      type: 'string',
+                      enum: ['lte', 'gte', 'eq'],
+                      description: `Comparison operator for the value, e.g., 'lte' for ≤, 'eq' for = and 'gte' for ≥`,
+                    },
+                  },
                 },
                 bank: {
                   type: 'string',

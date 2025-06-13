@@ -129,29 +129,79 @@ export class CardsService {
     features,
     annualFee,
     bank,
+    bestFor,
+    categories,
+    matchOperator,
   }: {
-    features: string[];
-    annualFee: string;
+    features: { values: string[]; matchType: string };
+    annualFee: { value: string; comparator: string };
     bank: string;
+    bestFor: { values: string[]; matchType: string };
+    categories: { values: string[]; matchType: string };
+    matchOperator: string;
   }) {
-    const query: {
+    // const conditions: {
+    //   features?: any;
+    //   annualFee?: any;
+    //   bank?: any;
+    //   bestFor?: any;
+    //   categories?: any;
+    // }[] = [];
+    let query: {
       features?: any;
       annualFee?: any;
       bank?: any;
+      bestFor?: any;
+      categories?: any;
     } = {};
+
     if (features) {
-      query.features = {
-        $all: features.map(feature => new RegExp(feature, 'i')),
-      };
+      const featureRegex = features.values.map(f => new RegExp(f, 'i'));
+      query.features =
+        features.matchType === 'all'
+          ? { $all: featureRegex }
+          : { $in: featureRegex };
+      // conditions.push({
+      //   features:
+      //     features.matchType === 'all'
+      //       ? { $all: featureRegex }
+      //       : { $in: featureRegex },
+      // });
     }
 
-    if (annualFee !== undefined && annualFee !== null) {
-      console.log('working here');
-      query.annualFee = { $lte: annualFee };
+    if (annualFee?.value !== undefined) {
+      const comparator = annualFee.comparator || 'lte';
+      query.annualFee = { [`$${comparator}`]: annualFee.value };
+      // conditions.push({
+      //   annualFee: { [`$${comparator}`]: annualFee.value },
+      // });
+    }
+
+    if (categories) {
+      const categoryRegex = categories.values.map(c => new RegExp(c, 'i'));
+      query.categories =
+        categories.matchType === 'all'
+          ? { $all: categoryRegex }
+          : { $in: categoryRegex };
+    }
+
+    if (bestFor) {
+      const categoryRegex = bestFor.values.map(c => new RegExp(c, 'i'));
+      query.bestFor =
+        bestFor.matchType === 'all'
+          ? { $all: categoryRegex }
+          : { $in: categoryRegex };
     }
 
     if (bank) {
       query.bank = new RegExp(bank, 'i');
+    }
+
+    console.log(query);
+    if (matchOperator === 'or') {
+      return await this.cardModel.find({ $or: [query] });
+    } else if (matchOperator === 'and') {
+      return await this.cardModel.find({ $and: [query] });
     }
 
     return await this.cardModel.find(query);
