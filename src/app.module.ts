@@ -9,7 +9,7 @@ dotenv.config();
 @Module({
   imports: [
     CardsModule,
-    MongooseModule.forRoot('mongodb://127.0.0.1:27017/credits?', {
+    MongooseModule.forRoot(process.env.MONGO_URI, {
       // auth: { password: 'pass', username: 'admin' },
       // connectionFactory: connection => {
       //   console.log(connection);
